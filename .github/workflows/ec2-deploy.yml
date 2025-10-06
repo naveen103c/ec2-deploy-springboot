@@ -37,6 +37,9 @@ jobs:
           name: jar-artifact
           path: .
 
+      - name: Debug EC2 Host
+        run: echo "Connecting to ${{ secrets.EC2_HOST }}"
+
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
