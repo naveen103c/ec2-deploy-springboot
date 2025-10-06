@@ -5,13 +5,6 @@ on:
     branches:
       - main
 
-env:
-  AWS_REGION: ap-southeast-1
-  EC2_HOST: ${{ secrets.EC2_HOST }}
-  EC2_KEY: ${{ secrets.EC2_KEY }}
-  EC2_PORT: ${{ secrets.EC2_PORT }}
-
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -45,22 +38,22 @@ jobs:
           path: .
 
       - name: Debug EC2 Host
-        run: echo "Connecting to ${{ env.EC2_HOST }}"
+        run: echo "Connecting to ${{ secrets.EC2_HOST }}"
 
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ env.EC2_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.EC2_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-#          ssh-keyscan -H ${{ env.EC2_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Copy JAR to EC2
         run: |
-          scp -i ~/.ssh/id_rsa -P 22 ec2-deploy-springboot-0.0.1-SNAPSHOT.jar ec2-user@ec2-175-41-188-201.ap-southeast-1.compute.amazonaws.com:/home/ec2-user/app/ec2-deploy-springboot-0.0.1-SNAPSHOT.jar
+          scp -i ~/.ssh/id_rsa -P ${{ secrets.EC2_PORT }} ec2-deploy-springboot-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_HOST }}:/home/ec2-user/app/ec2-deploy-springboot-0.0.1-SNAPSHOT.jar
 
       - name: Restart Application
         run: |
-          ssh -i ~/.ssh/id_rsa -p 22 ec2-user@ec2-175-41-188-201.ap-southeast-1.compute.amazonaws.com << 'EOF'
+          ssh -i ~/.ssh/id_rsa -p ${{ secrets.EC2_PORT }} ${{ secrets.EC2_HOST }} << 'EOF'
             pkill -f ec2-deploy-springboot.jar || true
             nohup java -jar /home/ec2-user/app/ec2-deploy-springboot-0.0.1-SNAPSHOT.jar > /home/ec2-user/app/application.log 2>&1 &
           EOF
