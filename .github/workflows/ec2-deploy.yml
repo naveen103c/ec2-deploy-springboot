@@ -50,7 +50,18 @@ jobs:
 
       - name: Restart Application
         run: |
-          ssh -i ~/.ssh/id_rsa -p ${{ secrets.EC2_PORT }} ec2-user@${{ secrets.EC2_HOST }} << 'EOF'          
+          ssh -i ~/.ssh/id_rsa -p ${{ secrets.EC2_PORT }} ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+            echo "Connected to EC2: $(hostname)"
+            # Install Java 17 (Amazon Corretto)
+            if ! java -version 2>&1 | grep "17" > /dev/null; then
+              sudo yum install java-17-amazon-corretto -y
+            else
+              echo "Java 17 already installed."
+            fi
+          
+            # Set JAVA_HOME and update PATH
+            export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
+            export PATH=$JAVA_HOME/bin:$PATH          
             pkill -f ec2-deploy-springboot.jar || true
             nohup java -jar /home/ec2-user/ec2-deploy-springboot-0.0.1-SNAPSHOT.jar > /home/ec2-user/application.log 2>&1 &
           EOF
