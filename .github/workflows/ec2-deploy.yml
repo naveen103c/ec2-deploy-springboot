@@ -53,7 +53,7 @@ jobs:
 
       - name: Restart Application
         run: |
-          ssh -i ~/.ssh/id_rsa -p ${{ secrets.EC2_PORT }} ec2-user@{{ secrets.EC2_HOST }} << 'EOF'
+          ssh -i ~/.ssh/id_rsa -p ${{ secrets.EC2_PORT }} ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
             pkill -f ec2-deploy-springboot.jar || true
             nohup java -jar /home/ec2-user/ec2-deploy-springboot-0.0.1-SNAPSHOT.jar > /home/ec2-user/application.log 2>&1 &
           EOF
