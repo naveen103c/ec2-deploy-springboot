@@ -5,6 +5,13 @@ on:
     branches:
       - main
 
+env:
+  AWS_REGION: ap-southeast-1
+  EC2_HOST: ${{ secrets.EC2_HOST }}
+  EC2_KEY: ${{ secrets.EC2_KEY }}
+  EC2_PORT: ${{ secrets.EC2_PORT }}
+
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,14 +45,14 @@ jobs:
           path: .
 
       - name: Debug EC2 Host
-        run: echo "Connecting to ${{ secrets.EC2_HOST }}"
+        run: echo "Connecting to ${{ env.EC2_HOST }}"
 
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ env.EC2_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+#          ssh-keyscan -H ${{ env.EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Copy JAR to EC2
         run: |
