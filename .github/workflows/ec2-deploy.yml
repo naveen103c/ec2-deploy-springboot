@@ -56,7 +56,7 @@ jobs:
 
       - name: Copy JAR to EC2
         run: |
-          scp -i ~/.ssh/id_rsa -P ${{ secrets.EC2_PORT }} ec2-deploy-springboot-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_HOST }}:/home/ec2-user/app/ec2-deploy-springboot-0.0.1-SNAPSHOT.jar
+          scp -i ~/.ssh/id_rsa -P ${{ env.EC2_PORT }} ec2-deploy-springboot-0.0.1-SNAPSHOT.jar ${{ env.EC2_HOST }}:/home/ec2-user/app/ec2-deploy-springboot-0.0.1-SNAPSHOT.jar
 
       - name: Restart Application
         run: |
