@@ -62,8 +62,11 @@ jobs:
             # Set JAVA_HOME and update PATH
             export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
             export PATH=$JAVA_HOME/bin:$PATH         
-            echo "Installing application"
-            pkill -f ec2-deploy-springboot.jar || true
+          
+            echo "Killing or stopping the existing application if any"
+            pkill -f ec2-deploy-springboot || true
+            
+            #Starting spring boot app
             nohup java -jar /home/ec2-user/ec2-deploy-springboot-0.0.1-SNAPSHOT.jar > /home/ec2-user/application.log 2>&1 &
             echo "application installation complete"
           EOF
